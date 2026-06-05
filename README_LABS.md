@@ -19,6 +19,24 @@ Each notebook is meant to be stepped through cell-by-cell and narrated to an aud
 
 ---
 
+## Run it on Google Colab (zero install)
+
+Both notebooks are Colab-ready — share these links and your audience just clicks and runs
+(**Runtime ▸ Run all**); no install, no GPU required:
+
+- **Lab 1 (evasion / stickers):**
+  https://colab.research.google.com/github/joshuacaplan/tsr-labs/blob/main/Lab1_Evasion_Patch_Attack.ipynb
+- **Lab 2 (poisoning / backdoor):**
+  https://colab.research.google.com/github/joshuacaplan/tsr-labs/blob/main/Lab2_Data_Poisoning_BadNets.ipynb
+
+The first cell ("Colab bootstrap") shallow-clones the public research repo (model weights +
+sample sign) and this repo (helpers + **pre-computed artifacts**); Lab 2 also auto-downloads
+GTSRB (~145 MB). Because the artifacts are tracked here, the notebooks run in **seconds** — no
+waiting for the attack to optimise or the backdoor to train. The same notebooks also run
+locally (the bootstrap cell is a no-op off Colab).
+
+---
+
 ## 1. Environment (macOS, Apple Silicon)
 
 A Python 3.12 virtual environment is already set up at `tsr-labs/.venv` (PyTorch uses Apple
