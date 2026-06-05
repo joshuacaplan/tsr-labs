@@ -7,7 +7,7 @@ repo (ICMLA 2024).
 
 | Notebook | Attack | What it shows |
 |---|---|---|
-| `Lab1_Evasion_Patch_Attack.ipynb` | **Evasion** (inference-time) | A printable patch on a real **30 km/h** sign makes the model read **Stop**. The model is untouched; only the input changes. |
+| `Lab1_Evasion_Patch_Attack.ipynb` | **Evasion** (inference-time) | A few **black-and-white stickers** on a real, high-resolution **STOP** sign make the model read **Speed limit 30 km/h** — robust to viewing changes. The model is untouched; only the input changes. (Real sign photo, stickers applied digitally — a faithful simulation of the physical attack.) |
 | `Lab2_Data_Poisoning_BadNets.ipynb` | **Data poisoning / backdoor** (training-time) | A secret trigger stamped on training data plants a backdoor: clean accuracy stays high, but any sign wearing the trigger is read as **Stop**. |
 
 Each notebook is meant to be stepped through cell-by-cell and narrated to an audience.
@@ -64,9 +64,11 @@ The heavy compute is done **once, offline**, so the live notebooks stay fast. Ru
 `tsr-labs/` before presenting:
 
 ```bash
-# Lab 1: optimise the adversarial patch (~15-20 min on MPS; writes artifacts/lab1_precomputed_*)
+# Lab 1: optimise the sticker attack (~1-2 min on MPS; writes artifacts/lab1_sticker_CNNsmallGTSRB/)
+#   The MPS fallback env var is REQUIRED (grid_sample's backward isn't on MPS).
 PYTORCH_ENABLE_MPS_FALLBACK=1 .venv/bin/python precompute_lab1.py
-#   faster, still flips CNN-small:  .venv/bin/python precompute_lab1.py --attack-epochs 8000
+#   colour (stronger) instead of black/white:  ... precompute_lab1.py --color
+#   different target speed limit:               ... precompute_lab1.py --target 2   # 50 km/h
 
 # Lab 2: train the backdoored model (a few minutes; writes artifacts/CNNsmallGTSRB_backdoor.pth)
 .venv/bin/python precompute_lab2.py
@@ -95,13 +97,16 @@ tsr-labs/
   Lab1_Instructor_Manual.md           # how to teach Lab 1 (objectives, cell-by-cell script, Q&A)
   Lab2_Instructor_Manual.md           # how to teach Lab 2 (objectives, cell-by-cell script, Q&A)
   lab_common.py                       # helpers: device, plot suppression, FGSM/PGD,
-                                       #          trigger/poison, fast_train, metrics
-  precompute_lab1.py                  # offline: heavy patch attack -> artifacts/
-  precompute_lab2.py                  # offline: train backdoor    -> artifacts/
+                                       #          hi-res sticker attack (EoT), trigger/poison,
+                                       #          fast_train, metrics
+  precompute_lab1.py                  # offline: hi-res sticker attack -> artifacts/lab1_sticker_*
+  precompute_lab2.py                  # offline: train backdoor        -> artifacts/
   README_LABS.md
-  .venv/                              # Python 3.12 environment
-  data/GTSRB/                         # dataset (Lab 2)
-  artifacts/                          # generated patch + backdoored model
+  .gitignore                          # excludes .venv/ and data/ from git
+  .venv/                              # Python 3.12 environment (git-ignored)
+  data/GTSRB/                         # dataset (Lab 2; git-ignored)
+  artifacts/lab1_sticker_CNNsmallGTSRB/  # Lab 1: clean/adv hi-res PNGs, mask, sticker_tensor.pt
+  artifacts/CNNsmallGTSRB_backdoor.pth   # Lab 2: backdoored model
 ```
 
 ## 5. Notes for presenters
@@ -109,5 +114,14 @@ tsr-labs/
 - Both labs deliberately use **CNN-small (LISA-CNN)** — the paper's most vulnerable model, and
   it returns raw logits so the softmax-confidence read-outs are correct. Do **not** swap in the
   repo's `Transformer`: it returns `log_softmax`, which would make the printed confidences wrong.
-- Success criteria: **Lab 1** — patched sign predicted as *Stop* (class 14); **Lab 2** — clean
-  accuracy ≥ ~95% *and* attack success rate ≥ ~95% at the same time.
+- Success criteria: **Lab 1** — stickered STOP sign predicted as *Speed limit 30 km/h* (class 1),
+  ~97% confidence, ~100% robust over 200 augmented views; **Lab 2** — clean accuracy ≥ ~95%
+  *and* attack success rate ≥ ~95% at the same time.
+
+## 6. Version control (git)
+
+`tsr-labs/` is a git repo. `main` holds the baseline (the labs before the hi-res Lab 1
+redesign); the redesign lives on the `lab1-hires-sticker` branch. To roll back any change you
+don't like, `git checkout main` (or revert a specific commit). `.venv/` and `data/` are
+git-ignored (large, recreate from the steps above); `artifacts/` IS tracked so a known-good
+demo state is always recoverable. The upstream research repo is never touched.
