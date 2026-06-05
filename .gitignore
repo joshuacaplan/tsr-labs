@@ -1,0 +1,17 @@
+# Python virtual environment (large, recreate from README_LABS.md)
+.venv/
+
+# Datasets (large; download per README_LABS.md). GTSRB pickles ~150 MB.
+data/
+
+# Python bytecode / Jupyter checkpoints
+__pycache__/
+*.pyc
+*.pyo
+.ipynb_checkpoints/
+
+# macOS
+.DS_Store
+
+# NOTE: artifacts/ IS tracked on purpose — the pre-computed patch + backdoor
+# model are small (~4 MB) and let you restore a known-good demo state.
