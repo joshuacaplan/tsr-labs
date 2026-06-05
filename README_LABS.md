@@ -112,8 +112,6 @@ Open a lab and **Restart & Run All**. If you skipped the pre-compute, Lab 1 rais
 tsr-labs/
   Lab1_Evasion_Patch_Attack.ipynb     # narrated evasion-attack walkthrough
   Lab2_Data_Poisoning_BadNets.ipynb   # narrated backdoor walkthrough
-  Lab1_Instructor_Manual.md           # how to teach Lab 1 (objectives, cell-by-cell script, Q&A)
-  Lab2_Instructor_Manual.md           # how to teach Lab 2 (objectives, cell-by-cell script, Q&A)
   lab_common.py                       # helpers: device, plot suppression, FGSM/PGD,
                                        #          hi-res sticker attack (EoT), trigger/poison,
                                        #          fast_train, metrics
