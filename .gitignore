@@ -16,6 +16,7 @@ __pycache__/
 # Instructor manuals — keep LOCAL only, never publish (they contain answers/Q&A)
 Lab1_Instructor_Manual.md
 Lab2_Instructor_Manual.md
+Instructor_Manual_Combined.md
 
 # NOTE: artifacts/ IS tracked on purpose — the pre-computed patch + backdoor
 # model are small (~4 MB) and let you restore a known-good demo state.
